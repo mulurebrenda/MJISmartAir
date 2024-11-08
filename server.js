@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const axios = require("axios");
@@ -6,19 +7,31 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 5501;
 
-
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // MySQL Connection
+const dbhost = process.env.MYSQL_HOST;
+const dbport = process.env.MYSQL_PORT;
+const dbuser = process.env.MYSQL_USER;
+const dbpassword = process.env.MYSQL_PASSWORD;
+const dbdatabase = process.env.MYSQL_DATABASE;
+
 const db = mysql.createConnection({
+  host: dbhost,
+  port: dbport,
+  user: dbuser, // your MySQL username
+  password: dbpassword, // your MySQL password
+  database: dbdatabase,
+});
+
+/*const db = mysql.createConnection({
   host: "127.0.0.1",
   user: "root", // your MySQL username
   password: "MJIDATABASE", // your MySQL password
   database: "aqi_data",
-});
-
+});*/
 
 // Connect to MySQL
 db.connect((err) => {
@@ -27,7 +40,8 @@ db.connect((err) => {
 });
 
 // Define API Key and Locations
-const API_KEY = "1615adaa703ba9f96a337d48232ad32d";
+const API_KEY = process.env.API_KEY;
+//const API_KEY = "1615adaa703ba9f96a337d48232ad32d";
 const LOCATIONS = [
   { name: "Nyeri Town", lat: "-0.4279", lon: "36.9596" },
   { name: "Othaya", lat: "-0.5616", lon: "36.9415" },
@@ -125,8 +139,6 @@ app.get("/sensor_data", (req, res) => {
   });
 });
 
-
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
