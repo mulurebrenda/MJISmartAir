@@ -12,11 +12,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root", // your MySQL username
-  password: "MJIDATABASE", // your MySQL password
-  database: "aqi_data",
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
 });
+
 
 // Connect to MySQL
 db.connect((err) => {
