@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const db = mysql.createConnection({
   host: "127.0.0.1",
   user: "root", // your MySQL username
-  password: "Wvungu123*", // your MySQL password
+  password: "MJIDATABASE", // your MySQL password
   database: "aqi_data",
 });
 
