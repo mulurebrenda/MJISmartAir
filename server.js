@@ -4,18 +4,19 @@ const axios = require("axios");
 const cors = require("cors");
 const path = require("path");
 const app = express();
-const port = 5500;
+const port = process.env.PORT || 5501;
 
-app.use(cors({ origin: "https://mjismartair.netlify.app/" }));
+
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: "127.0.0.1",
+  user: "root", // your MySQL username
+  password: "MJIDATABASE", // your MySQL password
+  database: "aqi_data",
 });
 
 
@@ -91,8 +92,8 @@ async function fetchAndStoreAirPollutionData() {
   }
 }
 
-// Schedule data fetching every 3 minutes (180,000 ms)
-setInterval(fetchAndStoreAirPollutionData, 180000); // 1 min = 60000 ms
+// Schedule data fetching every 5 minutes (300,000 ms)
+setInterval(fetchAndStoreAirPollutionData, 300000); // 1 min = 60000 ms
 
 // Endpoint to get sensor data for a specific location
 app.get("/sensor_data/:location", (req, res) => {
@@ -123,6 +124,7 @@ app.get("/sensor_data", (req, res) => {
     }
   });
 });
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

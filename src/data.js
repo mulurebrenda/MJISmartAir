@@ -1,8 +1,6 @@
 async function fetchSensorData() {
   try {
-    const response = await fetch(
-      "https://mjismartair.onrender.com/sensor_data"
-    );
+    const response = await fetch("http://localhost:5501/sensor_data");
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
     displayData(data);
