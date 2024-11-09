@@ -1,5 +1,5 @@
 async function fetchSensorData() {
-  const response = await fetch("/sensor_data"); // Get all data
+  const response = await fetch("https://mjismartair.onrender.com/sensor_data"); // Get all data
   const data = await response.json();
 
   // Create a map to track the latest entry for each location
