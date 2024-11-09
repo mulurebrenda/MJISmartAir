@@ -385,37 +385,20 @@ div.data-table {
   box-shadow: 1px 1px 2px rgba(140, 140, 140, 0.211);
     }
     
-div.datatable-header{
-    background-color: #f4f4f4;
-    font-weight: bold;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    display: flex;
-    flex-grow: 1;
-    width: 100%;
-    }
-div.datatable-header div.col{
-  width: 12.5%;
-  text-align: center;
-}
-
-div.datatable-header, td {
-    padding: 0.8em;
-    text-align: center;    
-    }
 table {
-  width: 100%;
-}
-tr{
-  display: flex;
-  flex-wrap: wrap;
-}
-
-td {
-  text-align: center; 
-  width: 12.5%;
-}
-
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
   
 
 @media (max-width: 576px) {

@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const mysql = require("mysql2");
+const { Client } = require("pg"); // Import PostgreSQL client
 const axios = require("axios");
 const cors = require("cors");
 const path = require("path");
@@ -11,37 +11,29 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// MySQL Connection
-const dbhost = process.env.MYSQL_HOST;
-const dbport = process.env.MYSQL_PORT;
-const dbuser = process.env.MYSQL_USER;
-const dbpassword = process.env.MYSQL_PASSWORD;
-const dbdatabase = process.env.MYSQL_DATABASE;
+// PostgreSQL Connection
+const dbhost = process.env.DB_HOST;
+const dbport = process.env.DB_PORT || 5432; // Default PostgreSQL port is 5432
+const dbuser = process.env.DB_USER;
+const dbpassword = process.env.DB_PASSWORD;
+const dbdatabase = process.env.DB_NAME;
 
-const db = mysql.createConnection({
+const client = new Client({
   host: dbhost,
   port: dbport,
-  user: dbuser, // your MySQL username
-  password: dbpassword, // your MySQL password
+  user: dbuser,
+  password: dbpassword,
   database: dbdatabase,
 });
 
-/*const db = mysql.createConnection({
-  host: "127.0.0.1",
-  user: "root", // your MySQL username
-  password: "MJIDATABASE", // your MySQL password
-  database: "aqi_data",
-});*/
-
-// Connect to MySQL
-db.connect((err) => {
+// Connect to PostgreSQL
+client.connect((err) => {
   if (err) throw err;
-  console.log("MySQL Connected...");
+  console.log("PostgreSQL Connected...");
 });
 
 // Define API Key and Locations
 const API_KEY = process.env.API_KEY;
-//const API_KEY = "1615adaa703ba9f96a337d48232ad32d";
 const LOCATIONS = [
   { name: "Nyeri Town", lat: "-0.4279", lon: "36.9596" },
   { name: "Othaya", lat: "-0.5616", lon: "36.9415" },
@@ -80,25 +72,26 @@ async function fetchAndStoreAirPollutionData() {
       const SO2 = airData.components?.so2 || null;
       const dust = airData.components?.pm10 || null;
 
-      // Prepare SQL insert statement with an additional location column
+      // Prepare SQL insert statement for PostgreSQL
       const insertQuery = `
         INSERT INTO sensor_data (location_name, timestamp, aqi, CO, ozone, NO2, SO2, dust)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       `;
 
-      // Insert data into MySQL
-      db.query(
-        insertQuery,
-        [location.name, timestamp, aqi, CO, ozone, NO2, SO2, dust],
-        (err) => {
-          if (err) {
-            console.error(`Error inserting data for ${location.name}:`, err);
-          } else {
-            console.log(
-              `Air pollution data for ${location.name} inserted successfully.`
-            );
-          }
-        }
+      // Insert data into PostgreSQL
+      await client.query(insertQuery, [
+        location.name,
+        timestamp,
+        aqi,
+        CO,
+        ozone,
+        NO2,
+        SO2,
+        dust,
+      ]);
+
+      console.log(
+        `Air pollution data for ${location.name} inserted successfully.`
       );
     } catch (error) {
       console.error(`Error fetching data for ${location.name}:`, error);
@@ -107,19 +100,19 @@ async function fetchAndStoreAirPollutionData() {
 }
 
 // Schedule data fetching every 5 minutes (300,000 ms)
-setInterval(fetchAndStoreAirPollutionData, 300000); // 1 min = 60000 ms
+setInterval(fetchAndStoreAirPollutionData, 300000); // 5 mins = 300000 ms
 
 // Endpoint to get sensor data for a specific location
 app.get("/sensor_data/:location", (req, res) => {
   const location = req.params.location;
   const query =
-    "SELECT * FROM sensor_data WHERE location_name = ? ORDER BY timestamp DESC";
-  db.query(query, [location], (err, results) => {
+    "SELECT * FROM sensor_data WHERE location_name = $1 ORDER BY timestamp DESC";
+  client.query(query, [location], (err, results) => {
     if (err) {
       console.error(err);
       res.status(500).json({ message: "Error retrieving data" });
     } else {
-      res.json(results); // Send data as JSON
+      res.json(results.rows); // PostgreSQL result rows
       console.log(`Data sent to client for ${location}`);
     }
   });
@@ -128,12 +121,12 @@ app.get("/sensor_data/:location", (req, res) => {
 // Endpoint to get all sensor data
 app.get("/sensor_data", (req, res) => {
   const query = "SELECT * FROM sensor_data ORDER BY timestamp DESC";
-  db.query(query, (err, results) => {
+  client.query(query, (err, results) => {
     if (err) {
       console.error(err);
       res.status(500).json({ message: "Error retrieving data" });
     } else {
-      res.json(results); // Send data as JSON
+      res.json(results.rows); // PostgreSQL result rows
       console.log("All data sent to client");
     }
   });

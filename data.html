@@ -154,19 +154,23 @@
         </section>
         <section class="data-page" id="data-page">
                 <div class="data-table" id="data-container">
-                    <div class="row datatable-header">
-                        <div class="col">City</div>
-                        <div class="col">Time</div>
-                        <div class="col">AQI</div>
-                        <div class="col">CO</div>
-                        <div class="col">Ozone</div>
-                        <div class="col">NO2</div>
-                        <div class="col">SO2</div>
-                        <div class="col">Dust</div>
-                    </div>
-                    <table class="row datatable-body" >
-                        <tbody id="datatable-body"></tbody>
-                    </table>
+                    <table id="sensorDataTable">
+        <thead>
+            <tr>
+                <th>Location Name</th>
+                <th>Timestamp</th>
+                <th>AQI</th>
+                <th>CO</th>
+                <th>Ozone</th>
+                <th>NO2</th>
+                <th>SO2</th>
+                <th>Dust</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data rows will be populated here -->
+        </tbody>
+    </table>
                 </div>
         </section>
         <footer class="footer p-3 pt-0 ">
