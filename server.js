@@ -16,7 +16,7 @@ const dbhost = process.env.DB_HOST;
 const dbport = process.env.DB_PORT || 5432; // Default PostgreSQL port is 5432
 const dbuser = process.env.DB_USER;
 const dbpassword = process.env.DB_PASSWORD;
-const dbdatabase = process.env.DB_NAME;
+const dbdatabase = process.env.DB_DATABASE;
 
 const client = new Client({
   host: dbhost,
