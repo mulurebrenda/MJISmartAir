@@ -34,10 +34,10 @@ async function fetchSensorData() {
     newRow.insertCell(1).textContent = row.timestamp;
     newRow.insertCell(2).textContent = row.aqi;
     newRow.insertCell(3).textContent = row.co;
-    newRow.insertCell(4).textContent = row.o3; // Ozone
+    newRow.insertCell(4).textContent = row.ozone; 
     newRow.insertCell(5).textContent = row.no2;
     newRow.insertCell(6).textContent = row.so2;
-    newRow.insertCell(7).textContent = row.pm10; // Dust
+    newRow.insertCell(7).textContent = row.dust; 
   });
 }
 

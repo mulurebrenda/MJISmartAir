@@ -99,8 +99,8 @@ async function fetchAndStoreAirPollutionData() {
   }
 }
 
-// Schedule data fetching every 5 minutes (300,000 ms)
-setInterval(fetchAndStoreAirPollutionData, 300000); // 5 mins = 300000 ms
+// Schedule data fetching every 1hr (3,600,000 ms)
+setInterval(fetchAndStoreAirPollutionData, 3600000); 
 
 // Endpoint to get sensor data for a specific location
 app.get("/sensor_data/:location", (req, res) => {
